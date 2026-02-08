@@ -1,5 +1,6 @@
 # CI/CD: Build Next.js and deploy to Azure App Service on push to main
-# Secret required: AZURE_CREDENTIALS (JSON: clientId, clientSecret, subscriptionId, tenantId)
+# Required secret: AZURE_CREDENTIALS (JSON: clientId, clientSecret, subscriptionId, tenantId)
+# Optional (for contact form email): GMAIL_USER, GMAIL_APP_PASSWORD
 
 name: CI/CD – Deploy to Azure
 
@@ -94,6 +95,22 @@ jobs:
             az appservice plan create --name plan-quantumbridge --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --sku F1 --is-linux --output none
             az webapp create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --plan plan-quantumbridge --runtime "NODE:20-lts" --output none
             az webapp config set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --startup-file "node server.js" --output none
+          fi
+
+      - name: Set Gmail env vars on Web App (contact form)
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          if [ -n "$GMAIL_USER" ] && [ -n "$GMAIL_APP_PASSWORD" ]; then
+            az webapp config appsettings set \
+              --name ${{ env.AZURE_WEBAPP_NAME }} \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --settings GMAIL_USER="$GMAIL_USER" GMAIL_APP_PASSWORD="$GMAIL_APP_PASSWORD" \
+              --output none
+            echo "Gmail app settings updated."
+          else
+            echo "Skipping: add GMAIL_USER and GMAIL_APP_PASSWORD in repo Secrets to enable contact form email."
           fi
 
       - name: Start Web App and wait until ready

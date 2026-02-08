@@ -65,15 +65,17 @@ Fill in:
 
 ## Step 4: Add environment variables (contact form)
 
-1. In your Web App, go to **Environment variables** (or **Settings** → **Configuration** → **Application settings**).
-2. Add two variables (use **+ Add** or **+ New application setting** if you see it). Add these:
+1. In your Web App, go to **Environment variables** (or **Configuration** → **Application settings** in the left menu).
+2. Click **+ Add** / **+ New application setting** and add these two (required for the contact form; otherwise you’ll see “Email is not configured. Please set GMAIL_USER and GMAIL_APP_PASSWORD”):
 
 | Name | Value |
 |------|--------|
-| `GMAIL_USER` | `narenderbeniwal1234@gmail.com` |
-| `GMAIL_APP_PASSWORD` | Your 16-character Gmail App Password |
+| `GMAIL_USER` | Your Gmail address (e.g. `narenderbeniwal1234@gmail.com`) |
+| `GMAIL_APP_PASSWORD` | Your 16-character Gmail [App Password](https://myaccount.google.com/apppasswords) (not your normal password) |
 
-3. For each one: enter **Name** and **Value**, then confirm. Click **Save** at the top when done.
+3. **Save** at the top. The app will restart and the contact form will work.
+
+**Alternative (CI/CD):** Add the same two as **GitHub repo Secrets** (`GMAIL_USER`, `GMAIL_APP_PASSWORD`). The workflow will set them on the Web App on each deploy.
 
 ---
 
