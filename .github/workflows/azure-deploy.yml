@@ -10,7 +10,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: quantumbridge-website   # change to your app name
   AZURE_RESOURCE_GROUP: quantam              # your actual resource group name
-  AZURE_LOCATION: eastus                     # region for new resources
+  AZURE_LOCATION: canadacentral              # region (must match existing resource group)
   NODE_VERSION: '20'
 
 jobs:
