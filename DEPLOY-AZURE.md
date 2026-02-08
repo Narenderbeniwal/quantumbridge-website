@@ -2,6 +2,10 @@
 
 Use **Azure App Service** on the **Free (F1)** tier to get a shareable link (e.g. `https://quantumbridge-website.azurewebsites.net`).
 
+**If you already have an Azure account** (e.g. Azure for Students), sign in and start from Step 2.
+
+**Note:** Azure has disabled basic authentication (publish profile) in many cases. This guide uses a **service principal** (App registration) instead, so you do not need to download or use a publish profile.
+
 ---
 
 ## What’s already in the repo
@@ -11,11 +15,11 @@ Use **Azure App Service** on the **Free (F1)** tier to get a shareable link (e.g
 
 ---
 
-## Step 1: Create an Azure account
+## Step 1: Sign in to Azure
 
-1. Go to [https://azure.microsoft.com/free/](https://azure.microsoft.com/free/).
-2. Click **Start free** and sign in with a Microsoft account (or create one).
-3. You may need a credit card for verification; the Free tier does not charge if you stay within free limits.
+1. Go to [Azure Portal](https://portal.azure.com).
+2. Sign in with your **existing Azure account** (e.g. your **Azure for Students** / student account).
+3. No new sign-up needed—your student subscription works with the Free F1 tier.
 
 ---
 
@@ -29,7 +33,7 @@ Fill in:
 
 | Field | Value |
 |--------|--------|
-| **Subscription** | Your subscription (e.g. Free Trial) |
+| **Subscription** | Your subscription (e.g. Azure for Students) |
 | **Resource group** | Create new, e.g. `rg-quantumbridge` |
 | **Name** | `quantumbridge-website` (or another unique name; this becomes `https://<name>.azurewebsites.net`) |
 | **Publish** | Code |
@@ -50,57 +54,82 @@ Fill in:
 1. In the portal, open your **Web App** (e.g. `quantumbridge-website`).
 2. Go to **Settings** → **Configuration** (or **Configuration** in the left menu).
 3. Open the **General settings** tab.
-4. Set **Startup Command** to:
-   ```bash
+4. In **Startup Command**, enter only:
+   ```
    node server.js
    ```
+   (Do not add `bash` or backticks—just the line above.)
 5. Click **Save** at the top.
 
 ---
 
 ## Step 4: Add environment variables (contact form)
 
-1. In the same **Configuration** page, open the **Application settings** tab.
-2. Click **+ New application setting** and add:
+1. In your Web App, go to **Environment variables** (or **Settings** → **Configuration** → **Application settings**).
+2. Add two variables (use **+ Add** or **+ New application setting** if you see it). Add these:
 
 | Name | Value |
 |------|--------|
 | `GMAIL_USER` | `narenderbeniwal1234@gmail.com` |
 | `GMAIL_APP_PASSWORD` | Your 16-character Gmail App Password |
 
-3. Click **OK** then **Save** at the top.
+3. For each one: enter **Name** and **Value**, then confirm. Click **Save** at the top when done.
 
 ---
 
-## Step 5: Get the publish profile
+## Step 5: Create a service principal (for GitHub Actions – no publish profile)
 
-1. In your Web App, go to **Overview** (or **Deployment Center**).
-2. Click **Get publish profile** (or **Download publish profile**) to download the `.PublishSettings` file.
-3. Open the file in a text editor and copy **all** of its contents (one long block of XML).
+Because **basic authentication is disabled** in Azure, we use a **service principal** instead of the publish profile.
+
+1. In Azure Portal, search for **Microsoft Entra ID** (or **Azure Active Directory**) and open it.
+2. Go to **App registrations** → **+ New registration**.
+3. **Name:** e.g. `github-quantumbridge-deploy`. **Supported account types:** leave default. Click **Register**.
+4. On the app page, note:
+   - **Application (client) ID** → used as `clientId` in the `AZURE_CREDENTIALS` JSON (Step 6).
+   - **Directory (tenant) ID** → used as `tenantId` in the `AZURE_CREDENTIALS` JSON (Step 6).
+5. Go to **Certificates & secrets** → **+ New client secret** → add a description, choose expiry (e.g. 24 months) → **Add**. Copy the **Value** once (used as `clientSecret` in the JSON; it won’t be shown again).
+6. Go to **Subscriptions** (search in the top bar), open your subscription, and copy the **Subscription ID** → used as `subscriptionId` in the `AZURE_CREDENTIALS` JSON (Step 6).
+7. Grant the app access to your Web App:
+   - Go to your **Web App** in the portal.
+   - Open **Access control (IAM)** → **+ Add** → **Add role assignment**.
+   - **Role:** **Website Contributor** (or **Contributor**).
+   - **Members:** select the app you created (e.g. `github-quantumbridge-deploy`). Save.
 
 ---
 
-## Step 6: Add the secret in GitHub
+## Step 6: Add one secret in GitHub
 
-1. Open your repo: **https://github.com/Narenderbeniwal/quantumbridge-website**
-2. Go to **Settings** → **Secrets and variables** → **Actions**.
-3. Click **New repository secret**.
-4. **Name:** `AZURE_WEBAPP_PUBLISH_PROFILE`
-5. **Value:** paste the full contents of the publish profile file.
-6. Click **Add secret**.
+The Azure Login action needs a **single JSON secret** (not four separate ones).
+
+1. Open **Settings** → **Secrets and variables** → **Actions** in your repo.  
+   **Direct link:** [quantumbridge-website → Secrets/Actions](https://github.com/Narenderbeniwal/quantumbridge-website/settings/secrets/actions)
+2. Click **New repository secret**.
+3. **Name:** `AZURE_CREDENTIALS`
+4. **Value:** one JSON object (use your real values from Step 5; put everything on one line, no extra spaces):
+
+   ```json
+   {"clientId":"<Application (client) ID>","clientSecret":"<your client secret value>","subscriptionId":"<Subscription ID>","tenantId":"<Directory (tenant) ID>"}
+   ```
+
+   Example (fake values):
+   ```json
+   {"clientId":"12345678-abcd-1234-abcd-123456789012","clientSecret":"abc123~YourSecretHere","subscriptionId":"87654321-dcba-4321-dcba-210987654321","tenantId":"11111111-2222-3333-4444-555555555555"}
+   ```
+
+5. Click **Add secret**.
+
+If you already added the four separate secrets (`AZURE_CLIENT_ID`, etc.), you can leave them; the workflow now uses only `AZURE_CREDENTIALS`. You can remove the old ones later if you want.
 
 ---
 
-## Step 7: Match the app name in the workflow (if needed)
+## Step 7: Match app name and resource group in the workflow (if needed)
 
-If your Web App name is **not** `quantumbridge-website`:
+If your Web App name or resource group is different:
 
 1. In the repo, open **`.github/workflows/azure-deploy.yml`**.
-2. Change the line:
-   ```yaml
-   AZURE_WEBAPP_NAME: quantumbridge-website
-   ```
-   to your actual Web App name (e.g. `my-app-name`).
+2. At the top under `env:`, set:
+   - `AZURE_WEBAPP_NAME` to your Web App name (e.g. `quantumbridge-website`).
+   - `AZURE_RESOURCE_GROUP` to your resource group name (e.g. `rg-quantumbridge`).
 3. Commit and push.
 
 ---
@@ -124,13 +153,13 @@ Share that link. For future updates, push to `main` and the same workflow will d
 
 ## Summary checklist
 
-- [ ] Azure account created
+- [ ] Signed in to Azure (student account)
 - [ ] Web App created (Runtime: Node 20, Linux, **Free F1** plan)
 - [ ] Startup command set to `node server.js`
-- [ ] `GMAIL_USER` and `GMAIL_APP_PASSWORD` added in Application settings
-- [ ] Publish profile downloaded
-- [ ] Secret `AZURE_WEBAPP_PUBLISH_PROFILE` added in GitHub with full publish profile content
-- [ ] `AZURE_WEBAPP_NAME` in workflow matches your Web App name
+- [ ] `GMAIL_USER` and `GMAIL_APP_PASSWORD` added in Environment variables
+- [ ] App registration created; client secret created; **Website Contributor** (or Contributor) assigned to the Web App
+- [ ] GitHub secret added: `AZURE_CREDENTIALS` (JSON with clientId, clientSecret, subscriptionId, tenantId)
+- [ ] `AZURE_WEBAPP_NAME` and `AZURE_RESOURCE_GROUP` in the workflow match your app and resource group
 - [ ] Pushed to `main` and Actions run succeeded
 
 ---

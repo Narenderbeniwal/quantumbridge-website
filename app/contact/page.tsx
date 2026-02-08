@@ -135,7 +135,7 @@ export default function ContactPage() {
             <h3 className="font-display text-lg font-bold text-navy-900">Other ways to reach us</h3>
             <ul className="mt-4 space-y-3 text-navy-600">
               <li><strong>Email:</strong> <a href="mailto:narenderbeniwal1234@gmail.com" className="font-medium text-gold-600 hover:text-gold-700 transition">narenderbeniwal1234@gmail.com</a></li>
-              <li><strong>Phone:</strong> <a href="tel:+966501234567" className="font-medium text-gold-600 hover:text-gold-700 transition">+966 50 123 4567</a></li>
+              <li><strong>Phone:</strong> <a href="tel:+918168035634" className="font-medium text-gold-600 hover:text-gold-700 transition">+91 81680 35634</a></li>
             </ul>
           </div>
         </div>
