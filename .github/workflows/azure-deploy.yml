@@ -1,0 +1,45 @@
+# Deploy Next.js to Azure App Service (Free tier)
+# Add secret AZURE_WEBAPP_PUBLISH_PROFILE in GitHub repo settings
+
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AZURE_WEBAPP_NAME: quantumbridge-website   # change to your app name
+  NODE_VERSION: '20'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js (standalone)
+        run: npm run build
+
+      - name: Prepare standalone for deploy
+        run: |
+          mkdir -p deploy
+          cp -r .next/standalone/* deploy/
+          cp -r .next/static deploy/.next/static
+          cp -r public deploy/public 2>/dev/null || true
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: deploy
