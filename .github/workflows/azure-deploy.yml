@@ -58,9 +58,10 @@ jobs:
             az webapp config set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --startup-file "node server.js" --output none
           fi
 
-      - name: Deploy to Azure Web App (zip)
+      - name: Start Web App (required for deployment when app is stopped)
         run: |
-          az webapp deployment source config-zip \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --src deploy.zip
+          az webapp start --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
+
+      - name: Deploy to Azure Web App
+        run: |
+          az webapp deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }} --src-path deploy.zip --type zip
