@@ -42,11 +42,11 @@ jobs:
       - name: Zip deploy package
         run: cd deploy && zip -r ../deploy.zip . && cd ..
 
+      # Use v1: same creds JSON, avoids v2 OIDC/federated-token issues
       - name: Azure Login
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          auth-type: SERVICE_PRINCIPAL
 
       - name: Deploy to Azure Web App (zip)
         run: |
