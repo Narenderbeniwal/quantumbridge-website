@@ -10,6 +10,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: quantumbridge-website   # change to your app name
   AZURE_RESOURCE_GROUP: rg-quantumbridge     # change to your resource group name
+  AZURE_LOCATION: eastus                     # region for new resources
   NODE_VERSION: '20'
 
 jobs:
@@ -47,6 +48,15 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create resource group and Web App (if not exist)
+        run: |
+          az group create --name ${{ env.AZURE_RESOURCE_GROUP }} --location ${{ env.AZURE_LOCATION }} --output none
+          if ! az webapp show --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --output none 2>/dev/null; then
+            az appservice plan create --name plan-quantumbridge --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --sku F1 --is-linux --output none
+            az webapp create --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --plan plan-quantumbridge --runtime "NODE:20-lts" --output none
+            az webapp config set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --startup-file "node server.js" --output none
+          fi
 
       - name: Deploy to Azure Web App (zip)
         run: |
