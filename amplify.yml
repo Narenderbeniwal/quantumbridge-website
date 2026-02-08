@@ -1,0 +1,15 @@
+# AWS Amplify – Next.js
+# Set "web" as app root in Amplify if your repo root is the parent folder.
+
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  cache:
+    paths:
+      - node_modules/**/*

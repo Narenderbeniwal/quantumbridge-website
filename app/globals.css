@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #0f172a;
+  --gold: #eab308;
+  --cream: #fefce8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-accent-cream text-navy-900 antialiased;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-navy-900 via-navy-700 to-gold-600;
+  }
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-500 to-gold-400;
+  }
+}
+
+/* Hero dark background with subtle pattern */
+.hero-bg {
+  background-color: #0f172a;
+  background-image:
+    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(234, 179, 8, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 60% at 100% 50%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 0% 100%, rgba(234, 179, 8, 0.06) 0%, transparent 50%);
+}
+
+/* Grid overlay for hero */
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Card hover */
+.hover-lift {
+  @apply transition-all duration-500 ease-out;
+}
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(234, 179, 8, 0.1);
+}
+
+/* Link gold underline */
+.link-gold {
+  @apply relative;
+}
+.link-gold::after {
+  content: '';
+  @apply absolute left-0 bottom-0 h-0.5 w-0 bg-gold-500 transition-all duration-300;
+}
+.link-gold:hover::after {
+  @apply w-full;
+}
+
+/* Glass effect */
+.glass {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10;
+}
+
+/* Button shine on hover */
+.btn-gold {
+  @apply relative overflow-hidden;
+}
+.btn-gold::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full transition-transform duration-700;
+}
+.btn-gold:hover::before {
+  @apply translate-x-full;
+}
