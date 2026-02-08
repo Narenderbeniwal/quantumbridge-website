@@ -1,5 +1,5 @@
-# Deploy Next.js to Azure App Service (Free tier)
-# Add secret AZURE_WEBAPP_PUBLISH_PROFILE in GitHub repo settings
+# Deploy Next.js to Azure App Service (no publish profile – uses Azure login)
+# Add secrets: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_SECRET
 
 name: Deploy to Azure Web App
 
@@ -9,6 +9,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: quantumbridge-website   # change to your app name
+  AZURE_RESOURCE_GROUP: rg-quantumbridge     # change to your resource group name
   NODE_VERSION: '20'
 
 jobs:
@@ -33,13 +34,25 @@ jobs:
       - name: Prepare standalone for deploy
         run: |
           mkdir -p deploy
-          cp -r .next/standalone/* deploy/
+          cp -r .next/standalone/. deploy/
+          mkdir -p deploy/.next
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public 2>/dev/null || true
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      - name: Zip deploy package
+        run: cd deploy && zip -r ../deploy.zip . && cd ..
+
+      - name: Azure Login
+        uses: azure/login@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Deploy to Azure Web App (zip)
+        run: |
+          az webapp deployment source config-zip \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --src deploy.zip
