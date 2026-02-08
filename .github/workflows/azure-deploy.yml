@@ -13,8 +13,8 @@ concurrency:
 
 env:
   AZURE_WEBAPP_NAME: quantumbridge-website
-  AZURE_RESOURCE_GROUP: quantam
-  AZURE_LOCATION: canadacentral
+  AZURE_RESOURCE_GROUP: rg-quantumbridge
+  AZURE_LOCATION: eastus
   NODE_VERSION: "20"
 
 jobs:
