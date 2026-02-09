@@ -1,4 +1,15 @@
 import { ServicePage } from '@/components/services/ServicePage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'IT Consulting',
+  description:
+    'Strategy, digital transformation, and technology roadmaps.',
+  openGraph: {
+    title: 'IT Consulting – QuantumBridge Innovations',
+    description: 'Strategy, digital transformation, and technology roadmaps.',
+  },
+}
 
 const content = {
   title: 'IT Consulting',

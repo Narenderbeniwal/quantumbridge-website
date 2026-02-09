@@ -1,4 +1,15 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description:
+    'QuantumBridge Innovations – where IT meets talent. Enterprise IT services and recruitment lifecycle for companies and candidates.',
+  openGraph: {
+    title: 'About Us – QuantumBridge Innovations',
+    description: 'We combine enterprise IT services with a full recruitment lifecycle—so companies and candidates both win.',
+  },
+}
 
 export default function AboutPage() {
   return (

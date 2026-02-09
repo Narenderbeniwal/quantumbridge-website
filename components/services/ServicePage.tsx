@@ -43,7 +43,7 @@ export function ServicePage({ title, tagline, description, benefits, cta }: Serv
             </Link>
           </div>
           <p className="mt-10 text-center">
-            <Link href="/services/managed-it" className="font-semibold text-gold-600 hover:text-gold-700 transition inline-flex items-center gap-2">
+            <Link href="/services" className="font-semibold text-gold-600 hover:text-gold-700 transition inline-flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 rounded">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" /></svg>
               All services
             </Link>

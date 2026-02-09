@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { IMAGES } from '@/lib/images'
+import { SITE } from '@/lib/constants'
 
 export function ContactCTA() {
   return (
@@ -33,7 +34,7 @@ export function ContactCTA() {
                   <li><Link href="/jobs" className="text-navy-600 font-medium hover:text-gold-600 transition">Find Jobs</Link></li>
                   <li><Link href="/hire-talent" className="text-navy-600 font-medium hover:text-gold-600 transition">Hire Talent</Link></li>
                   <li><Link href="/services/managed-it" className="text-navy-600 font-medium hover:text-gold-600 transition">IT Services</Link></li>
-                  <li><a href="mailto:narenderbeniwal1234@gmail.com" className="text-navy-600 font-medium hover:text-gold-600 transition">narenderbeniwal1234@gmail.com</a></li>
+                  <li><a href={`mailto:${SITE.email}`} className="text-navy-600 font-medium hover:text-gold-600 transition">{SITE.email}</a></li>
                 </ul>
               </div>
             </div>

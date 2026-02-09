@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/services/managed-it', label: 'Services' },
+  { href: '/services', label: 'Services' },
   { href: '/hire-talent', label: 'Hire Talent' },
   { href: '/about', label: 'About' },
   { href: '/jobs', label: 'Jobs' },
@@ -15,12 +15,24 @@ const navLinks = [
 export function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!open) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    const firstFocusable = menuRef.current?.querySelector<HTMLElement>('a[href], button')
+    firstFocusable?.focus()
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [open])
 
   return (
     <header
@@ -65,9 +77,10 @@ export function Header() {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-lg p-2.5 text-white hover:bg-white/10 md:hidden transition"
+          className="inline-flex items-center justify-center rounded-lg p-2.5 text-white hover:bg-white/10 md:hidden transition focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2 focus:ring-offset-navy-900"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
+          aria-controls="mobile-menu"
           aria-label="Toggle menu"
         >
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,17 +94,17 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-navy-900 px-4 py-4 md:hidden">
+        <div id="mobile-menu" ref={menuRef} className="border-t border-white/10 bg-navy-900 px-4 py-4 md:hidden" role="dialog" aria-label="Mobile menu">
           <nav className="flex flex-col gap-1">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-4 py-3 text-white/90 hover:bg-white/5 hover:text-gold-400 transition"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
+<Link
+              key={link.href}
+              href={link.href}
+              className="rounded-lg px-4 py-3 text-white/90 hover:bg-white/5 hover:text-gold-400 transition focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-inset"
+              onClick={() => setOpen(false)}
+            >
+              {link.label}
+            </Link>
             ))}
             <div className="mt-3 flex flex-col gap-2 border-t border-white/10 pt-3">
               <Link

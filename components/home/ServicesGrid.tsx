@@ -86,7 +86,7 @@ export function ServicesGrid() {
           ))}
         </div>
         <div className="mt-14 text-center">
-          <Link href="/services/managed-it" className="link-gold inline-flex items-center gap-2 font-semibold text-navy-800">
+          <Link href="/services" className="link-gold inline-flex items-center gap-2 font-semibold text-navy-800 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 rounded">
             View all services
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
           </Link>

@@ -1,4 +1,15 @@
 import { ServicePage } from '@/components/services/ServicePage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Cloud Solutions',
+  description:
+    'Migration, architecture, and optimization on AWS, Azure, and GCP.',
+  openGraph: {
+    title: 'Cloud Solutions – QuantumBridge Innovations',
+    description: 'Migrate, build, and optimize on AWS, Azure, and GCP.',
+  },
+}
 
 const content = {
   title: 'Cloud Solutions',

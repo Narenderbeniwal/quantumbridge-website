@@ -1,4 +1,15 @@
 import { ServicePage } from '@/components/services/ServicePage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Managed IT',
+  description:
+    'End-to-end IT operations, support, and infrastructure management. Clear SLAs and predictable costs.',
+  openGraph: {
+    title: 'Managed IT – QuantumBridge Innovations',
+    description: 'End-to-end IT operations so you can focus on your business.',
+  },
+}
 
 const content = {
   title: 'Managed IT',

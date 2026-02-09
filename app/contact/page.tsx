@@ -1,11 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import { SITE } from '@/lib/constants'
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const MAX_NAME = 120
+  const MAX_MESSAGE = 5000
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -14,12 +19,28 @@ export default function ContactPage() {
 
     const form = e.currentTarget
     const formData = new FormData(form)
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      subject: formData.get('subject'),
-      message: formData.get('message'),
+    const name = String(formData.get('name') ?? '').trim()
+    const email = String(formData.get('email') ?? '').trim()
+    const subject = formData.get('subject')
+    const message = String(formData.get('message') ?? '').trim()
+
+    if (!name || name.length > MAX_NAME) {
+      setError(name ? `Name must be under ${MAX_NAME} characters.` : 'Please enter your name.')
+      setLoading(false)
+      return
     }
+    if (!EMAIL_REGEX.test(email)) {
+      setError('Please enter a valid email address.')
+      setLoading(false)
+      return
+    }
+    if (!message || message.length > MAX_MESSAGE) {
+      setError(message ? `Message must be under ${MAX_MESSAGE} characters.` : 'Please enter your message.')
+      setLoading(false)
+      return
+    }
+
+    const data = { name, email, subject: subject ?? 'other', message }
 
     try {
       const res = await fetch('/api/contact', {
@@ -82,8 +103,10 @@ export default function ContactPage() {
                   name="name"
                   type="text"
                   required
+                  maxLength={MAX_NAME}
                   disabled={loading}
                   className="mt-2 block w-full rounded-xl border border-navy-200 bg-white px-4 py-3.5 text-navy-900 shadow-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 disabled:opacity-70"
+                  autoComplete="name"
                 />
               </div>
               <div>
@@ -95,6 +118,7 @@ export default function ContactPage() {
                   required
                   disabled={loading}
                   className="mt-2 block w-full rounded-xl border border-navy-200 bg-white px-4 py-3.5 text-navy-900 shadow-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 disabled:opacity-70"
+                  autoComplete="email"
                 />
               </div>
               <div>
@@ -118,14 +142,17 @@ export default function ContactPage() {
                   name="message"
                   rows={5}
                   required
+                  maxLength={MAX_MESSAGE}
                   disabled={loading}
                   className="mt-2 block w-full rounded-xl border border-navy-200 bg-white px-4 py-3.5 text-navy-900 shadow-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 disabled:opacity-70"
+                  aria-describedby="message-hint"
                 />
+                <p id="message-hint" className="mt-1 text-xs text-navy-500">Max {MAX_MESSAGE.toLocaleString()} characters.</p>
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-gold w-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400 py-4 font-bold text-navy-900 shadow-glow-gold transition disabled:opacity-70 sm:w-auto sm:px-10"
+                className="btn-gold w-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400 py-4 font-bold text-navy-900 shadow-glow-gold transition disabled:opacity-70 sm:w-auto sm:px-10 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2"
               >
                 {loading ? 'Sending…' : 'Send message'}
               </button>
@@ -134,8 +161,8 @@ export default function ContactPage() {
           <div className="mt-14 rounded-2xl bg-navy-50 p-8 sm:p-10">
             <h3 className="font-display text-lg font-bold text-navy-900">Other ways to reach us</h3>
             <ul className="mt-4 space-y-3 text-navy-600">
-              <li><strong>Email:</strong> <a href="mailto:narenderbeniwal1234@gmail.com" className="font-medium text-gold-600 hover:text-gold-700 transition">narenderbeniwal1234@gmail.com</a></li>
-              <li><strong>Phone:</strong> <a href="tel:+918168035634" className="font-medium text-gold-600 hover:text-gold-700 transition">+91 81680 35634</a></li>
+              <li><strong>Email:</strong> <a href={`mailto:${SITE.email}`} className="font-medium text-gold-600 hover:text-gold-700 transition">{SITE.email}</a></li>
+              <li><strong>Phone:</strong> <a href={`tel:${SITE.phone.replace(/\s/g, '')}`} className="font-medium text-gold-600 hover:text-gold-700 transition">{SITE.phone}</a></li>
             </ul>
           </div>
         </div>

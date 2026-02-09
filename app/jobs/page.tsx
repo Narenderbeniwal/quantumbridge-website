@@ -1,13 +1,18 @@
 import Link from 'next/link'
 import { JobCard } from '@/components/jobs/JobCard'
+import { JOBS_LIST } from '@/lib/jobs'
+import type { Metadata } from 'next'
 
-const jobs = [
-  { id: '1', title: 'Senior Cloud Engineer', company: 'QuantumBridge Innovations', location: 'Riyadh', type: 'Full-time', category: 'Cloud', slug: 'senior-cloud-engineer' },
-  { id: '2', title: 'Cybersecurity Analyst', company: 'QuantumBridge Innovations', location: 'Remote', type: 'Full-time', category: 'Security', slug: 'cybersecurity-analyst' },
-  { id: '3', title: 'Full Stack Developer', company: 'QuantumBridge Innovations', location: 'Jeddah', type: 'Full-time', category: 'Software Development', slug: 'full-stack-developer' },
-  { id: '4', title: 'IT Support Specialist', company: 'QuantumBridge Innovations', location: 'Riyadh', type: 'Full-time', category: 'Managed IT', slug: 'it-support-specialist' },
-  { id: '5', title: 'DevOps Engineer', company: 'QuantumBridge Innovations', location: 'Remote', type: 'Contract', category: 'Cloud', slug: 'devops-engineer' },
-]
+export const metadata: Metadata = {
+  title: 'Careers | Open Positions',
+  description:
+    'Find your next role at QuantumBridge Innovations. Browse open positions in cloud, cybersecurity, software development, and IT. Apply via contact and we’ll get back to you.',
+  openGraph: {
+    title: 'Careers | Open Positions – QuantumBridge Innovations',
+    description:
+      'Find your next role. Browse open positions and apply via contact.',
+  },
+}
 
 export default function JobsPage() {
   return (
@@ -20,14 +25,14 @@ export default function JobsPage() {
             Open positions
           </h1>
           <p className="mt-6 text-xl text-slate-300">
-            Find your next role. Apply with one click and track your application in real time.
+            Find your next role. Apply by contacting us and we’ll respond promptly.
           </p>
         </div>
       </section>
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-6">
-            {jobs.map((job) => (
+            {JOBS_LIST.map((job) => (
               <JobCard key={job.id} job={job} />
             ))}
           </div>

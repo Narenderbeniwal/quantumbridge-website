@@ -15,7 +15,7 @@ export function JobsCTA() {
           Find your next role
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
-          Browse open positions, apply with one click using your saved profile, and track your application status in real time.
+          Browse open positions and apply by contacting us—we’ll respond promptly.
         </p>
         <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
           <Link

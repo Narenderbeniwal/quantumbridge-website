@@ -1,4 +1,15 @@
 import { ServicePage } from '@/components/services/ServicePage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Cybersecurity',
+  description:
+    'Protection, compliance, and incident response for your assets.',
+  openGraph: {
+    title: 'Cybersecurity – QuantumBridge Innovations',
+    description: 'Protect your assets and stay compliant.',
+  },
+}
 
 const content = {
   title: 'Cybersecurity',
